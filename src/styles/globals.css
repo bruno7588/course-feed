@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Background colors */
+  --page-background: #20222A; /* neutral-800 */
+  --cards-background: #2D313D; /* neutral-700 */
+
+  /* Text colors */
+  --text-primary: #F9F9FA; /* neutral-25 */
+  --text-secondary: #BFC2CC; /* neutral-200 */
+  --text-tertiary: #9EA4B3; /* neutral-300 */
+  --text-disabled: #656B7C; /* neutral-400 */
+
+  /* Border colors */
+  --border: #383D4C; /* neutral-600 */
+
+  /* Spacing */
+  --xxs: 4px;
+  --xs: 8px;
+  --s: 8px;
+  --sm: 12px;
+  --m: 16px;
+  --ml: 20px;
+  --l: 24px;
+  --xl: 32px;
+  --xxl: 40px;
+
+  /* Primary colors */
+  --primary-100: #CCF8FD;
+  --primary-200: #99F1FB;
+  --primary-300: #66E9F9;
+  --primary-400: #33E2F7;
+  --primary-500: #00CEE6;
+  --primary-600: #00AFC4;
+  --primary-700: #008393;
+  --primary-800: #005862;
+  --primary-900: #002C31;
+}
+
+@layer base {
+  * {
+    @apply border-neutral-600;
+  }
+
+  body {
+    @apply bg-neutral-800 text-neutral-25 font-sans;
+    font-family: 'Poppins', system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  /* Custom scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-neutral-700;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-neutral-600 rounded-full;
+  }
+}
