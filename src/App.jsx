@@ -11,6 +11,11 @@ import './styles/globals.css';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('details'); // 'details', 'feed', 'test', 'review', 'lesson', 'welldone', 'event', or 'pdf'
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Global sidebar state
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
 
   const navigateToFeed = () => {
     setCurrentPage('feed');
@@ -58,25 +63,25 @@ function App() {
         <CourseDetailsPage onStartSituationalTest={navigateToFeed} />
       )}
       {currentPage === 'feed' && (
-        <CourseFeedPage onBack={navigateToDetails} onStartTest={navigateToTest} />
+        <CourseFeedPage onBack={navigateToDetails} onStartTest={navigateToTest} sidebarOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
       )}
       {currentPage === 'test' && (
-        <SituationalTestPage onBack={navigateToDetails} onFinish={navigateToReview} onWellDone={navigateToWellDone} />
+        <SituationalTestPage onBack={navigateBackToFeed} onFinish={navigateToReview} onWellDone={navigateToWellDone} sidebarOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
       )}
       {currentPage === 'review' && (
-        <ReviewTestPage onBack={navigateToDetails} onReviewTest={navigateToTest} onNextLesson={navigateToLesson} />
+        <ReviewTestPage onBack={navigateToDetails} onReviewTest={navigateToTest} onNextLesson={navigateToLesson} sidebarOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
       )}
       {currentPage === 'lesson' && (
-        <LessonVideoPage onBack={navigateToDetails} onStartTest={navigateToTest} onNextPage={navigateToEvent} />
+        <LessonVideoPage onBack={navigateToDetails} onStartTest={navigateToTest} onNextPage={navigateToEvent} sidebarOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
       )}
       {currentPage === 'welldone' && (
         <WellDonePage onBack={navigateToDetails} onKeepLearning={navigateToEvent} />
       )}
       {currentPage === 'event' && (
-        <EventPage onBack={navigateToDetails} onPrevious={navigateToLesson} onNext={navigateToPDF} />
+        <EventPage onBack={navigateToDetails} onPrevious={navigateToLesson} onNext={navigateToPDF} onGoToTest={navigateToTest} onGoToLesson={navigateToLesson} sidebarOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
       )}
       {currentPage === 'pdf' && (
-        <PDFLessonPage onBack={navigateToDetails} onPrevious={navigateToEvent} onNext={navigateToLesson} onTakeQuiz={navigateToTest} />
+        <PDFLessonPage onBack={navigateToDetails} onPrevious={navigateToEvent} onNext={navigateToLesson} onTakeQuiz={navigateToTest} onGoToTest={navigateToTest} onGoToLesson={navigateToLesson} onGoToEvent={navigateToEvent} sidebarOpen={sidebarOpen} onToggleSidebar={toggleSidebar} />
       )}
     </div>
   );

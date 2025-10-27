@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { SidebarLeft, SidebarRight, ArrowUp, ArrowDown, ArrowDown2, ArrowUp2, Calendar, Clock, Location, People, TickCircle, PlayCircle, DocumentText, Link2, CloseCircle } from 'iconsax-react';
+import { SidebarLeft, SidebarRight, ArrowUp, ArrowDown, ArrowDown2, ArrowUp2, Calendar, Clock, Location, People, TickCircle, PlayCircle, DocumentText, Link2, CloseCircle, Lock } from 'iconsax-react';
 import { GlobalHeader } from '../components/layout/GlobalHeader';
 import { cn } from '../lib/utils';
 
@@ -10,9 +10,12 @@ import { cn } from '../lib/utils';
  * @param {Function} props.onBack - Callback for back navigation
  * @param {Function} props.onPrevious - Callback for previous navigation
  * @param {Function} props.onNext - Callback for next navigation
+ * @param {Function} props.onGoToTest - Callback to navigate to test
+ * @param {Function} props.onGoToLesson - Callback to navigate to video lesson
+ * @param {boolean} props.sidebarOpen - Global sidebar state
+ * @param {Function} props.onToggleSidebar - Callback to toggle sidebar
  */
-export const EventPage = ({ onBack, onPrevious, onNext }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+export const EventPage = ({ onBack, onPrevious, onNext, onGoToTest, onGoToLesson, sidebarOpen, onToggleSidebar }) => {
   const [showSidebarTooltip, setShowSidebarTooltip] = useState(false);
   const [courseOutlineOpen, setCourseOutlineOpen] = useState(false);
   const [attendanceDropdownOpen, setAttendanceDropdownOpen] = useState(false);
@@ -21,10 +24,6 @@ export const EventPage = ({ onBack, onPrevious, onNext }) => {
   const [showToast, setShowToast] = useState(false);
 
   const dropdownRef = useRef(null);
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
 
   const toggleAttendanceDropdown = () => {
     setAttendanceDropdownOpen(!attendanceDropdownOpen);
@@ -224,7 +223,7 @@ export const EventPage = ({ onBack, onPrevious, onNext }) => {
             {/* Sidebar Toggle */}
             <div className="relative">
               <button
-                onClick={toggleSidebar}
+                onClick={onToggleSidebar}
                 onMouseEnter={() => setShowSidebarTooltip(true)}
                 onMouseLeave={() => setShowSidebarTooltip(false)}
                 className="w-8 h-8 flex items-center justify-center hover:bg-neutral-700 rounded-full transition-colors"
@@ -271,7 +270,7 @@ export const EventPage = ({ onBack, onPrevious, onNext }) => {
           </div>
 
           {/* Animated Side Panel */}
-          <div className="w-[540px] bg-neutral-800 border-l border-neutral-600 overflow-y-auto">
+          <div className="w-[540px] bg-neutral-800 border-l border-neutral-600 overflow-y-auto transition-all duration-200 ease-in-out">
             <div className="flex flex-col gap-5 pb-8">
               {/* Course Outline */}
               <div className="bg-[rgba(69,76,94,0.16)] flex flex-col overflow-hidden">
@@ -296,7 +295,10 @@ export const EventPage = ({ onBack, onPrevious, onNext }) => {
                 >
                   <div className="flex flex-col gap-4 px-6 pb-4">
                     {/* Assessment Card - Completed */}
-                    <div className="bg-neutral-700 rounded-sm p-3 flex items-center gap-2">
+                    <button
+                      onClick={onGoToTest}
+                      className="bg-neutral-700 hover:bg-neutral-600 rounded-sm p-3 flex items-center gap-2 w-full transition-colors cursor-pointer"
+                    >
                       <div className="w-12 h-12 flex items-center justify-center overflow-hidden">
                         <img
                           src="https://www.figma.com/api/mcp/asset/3b9efe6d-556a-45c8-bec5-5b1b5416e754"
@@ -305,7 +307,7 @@ export const EventPage = ({ onBack, onPrevious, onNext }) => {
                         />
                       </div>
                       <div className="flex-1 flex flex-col gap-1">
-                        <p className="font-bold text-sm text-neutral-25 leading-6">
+                        <p className="font-bold text-sm text-neutral-25 leading-6 text-left">
                           50 free Tools and resources that everyone should know
                         </p>
                         <div className="flex items-center justify-between">
@@ -313,10 +315,13 @@ export const EventPage = ({ onBack, onPrevious, onNext }) => {
                           <TickCircle size={16} color="#18A957" variant="Bold" />
                         </div>
                       </div>
-                    </div>
+                    </button>
 
                     {/* Video Lesson Card - Completed */}
-                    <div className="bg-neutral-700 rounded-sm p-3 flex items-center gap-2">
+                    <button
+                      onClick={onGoToLesson}
+                      className="bg-neutral-700 hover:bg-neutral-600 rounded-sm p-3 flex items-center gap-2 w-full transition-colors cursor-pointer"
+                    >
                       <div className="w-12 h-12 rounded-s overflow-hidden relative">
                         <img
                           src="https://www.figma.com/api/mcp/asset/f6090e6a-1b17-4ef5-83d6-c0786d463ff2"
@@ -328,7 +333,7 @@ export const EventPage = ({ onBack, onPrevious, onNext }) => {
                         </div>
                       </div>
                       <div className="flex-1 flex flex-col gap-2">
-                        <p className="font-bold text-sm text-neutral-25 leading-6">
+                        <p className="font-bold text-sm text-neutral-25 leading-6 text-left">
                           50 free Tools and resources that everyone should know
                         </p>
                         <div className="flex items-center justify-between">
@@ -336,10 +341,10 @@ export const EventPage = ({ onBack, onPrevious, onNext }) => {
                           <TickCircle size={16} color="#18A957" variant="Bold" />
                         </div>
                       </div>
-                    </div>
+                    </button>
 
                     {/* Reading/Document Lesson Card - Completed */}
-                    <div className="bg-neutral-700 rounded-sm p-3 flex items-center gap-2">
+                    <button className="bg-neutral-700 hover:bg-neutral-600 rounded-sm p-3 flex items-center gap-2 w-full transition-colors cursor-pointer">
                       <div className="w-12 h-12 rounded-s overflow-hidden relative">
                         <img
                           src="https://www.figma.com/api/mcp/asset/f6090e6a-1b17-4ef5-83d6-c0786d463ff2"
@@ -351,7 +356,7 @@ export const EventPage = ({ onBack, onPrevious, onNext }) => {
                         </div>
                       </div>
                       <div className="flex-1 flex flex-col gap-2">
-                        <p className="font-bold text-sm text-neutral-25 leading-6">
+                        <p className="font-bold text-sm text-neutral-25 leading-6 text-left">
                           50 free Tools and resources that everyone should know
                         </p>
                         <div className="flex items-center justify-between">
@@ -359,10 +364,10 @@ export const EventPage = ({ onBack, onPrevious, onNext }) => {
                           <TickCircle size={16} color="#18A957" variant="Bold" />
                         </div>
                       </div>
-                    </div>
+                    </button>
 
                     {/* Link/External Resource Card - Completed */}
-                    <div className="bg-neutral-700 rounded-sm p-3 flex items-center gap-2">
+                    <button className="bg-neutral-700 hover:bg-neutral-600 rounded-sm p-3 flex items-center gap-2 w-full transition-colors cursor-pointer">
                       <div className="w-12 h-12 rounded-s overflow-hidden relative">
                         <img
                           src="https://www.figma.com/api/mcp/asset/f6090e6a-1b17-4ef5-83d6-c0786d463ff2"
@@ -374,7 +379,7 @@ export const EventPage = ({ onBack, onPrevious, onNext }) => {
                         </div>
                       </div>
                       <div className="flex-1 flex flex-col gap-2">
-                        <p className="font-bold text-sm text-neutral-25 leading-6">
+                        <p className="font-bold text-sm text-neutral-25 leading-6 text-left">
                           50 free Tools and resources that everyone should know
                         </p>
                         <div className="flex items-center justify-between">
@@ -382,7 +387,7 @@ export const EventPage = ({ onBack, onPrevious, onNext }) => {
                           <TickCircle size={16} color="#18A957" variant="Bold" />
                         </div>
                       </div>
-                    </div>
+                    </button>
 
                     {/* Event Card - In Progress */}
                     <div className="bg-[rgba(255,187,56,0.12)] rounded-sm p-3 flex items-start gap-2">
@@ -423,38 +428,65 @@ export const EventPage = ({ onBack, onPrevious, onNext }) => {
                       </div>
                     </div>
 
-                    {/* Assessment Card - Sales pitch */}
+                    {/* PDF Lesson Card - Disabled */}
                     <div className="bg-neutral-700 rounded-sm p-3 flex items-center gap-2">
-                      <div className="w-12 h-12 flex items-center justify-center overflow-hidden">
+                      <div className="w-12 h-12 rounded-lg overflow-hidden relative shrink-0 mix-blend-luminosity">
                         <img
-                          src="https://www.figma.com/api/mcp/asset/3b9efe6d-556a-45c8-bec5-5b1b5416e754"
-                          alt="Assessment"
-                          className="w-10 h-10"
+                          src="https://www.figma.com/api/mcp/asset/6d7d2c24-f4e8-4b97-bfa0-74856c72c5ba"
+                          alt="PDF thumbnail"
+                          className="absolute inset-0 w-full h-full object-cover rounded-lg"
                         />
+                        <div className="absolute left-0 top-0 bg-neutral-600 p-0.5 rounded-br flex items-center justify-center">
+                          <img
+                            src="https://www.figma.com/api/mcp/asset/c0ab2411-3e90-4d47-94e3-1185c71dadb2"
+                            alt="Document"
+                            className="w-[10.667px] h-[10.667px]"
+                          />
+                        </div>
                       </div>
-                      <div className="flex-1 flex flex-col gap-1">
-                        <p className="font-bold text-sm text-neutral-25 leading-6">
-                          Sales pitch
-                        </p>
-                        <p className="text-xs text-neutral-200">Short text</p>
-                      </div>
-                    </div>
-
-                    {/* Assessment Card - Multiple choice */}
-                    <div className="bg-neutral-700 rounded-sm p-3 flex items-center gap-2">
-                      <div className="w-12 h-12 flex items-center justify-center overflow-hidden">
-                        <img
-                          src="https://www.figma.com/api/mcp/asset/3b9efe6d-556a-45c8-bec5-5b1b5416e754"
-                          alt="Assessment"
-                          className="w-10 h-10"
-                        />
-                      </div>
-                      <div className="flex-1 flex flex-col gap-1">
-                        <p className="font-bold text-sm text-neutral-25 leading-6">
+                      <div className="flex-1 flex flex-col gap-1 min-w-0">
+                        <p className="font-bold text-sm text-neutral-500 leading-6 truncate">
                           50 free Tools and resources that everyone should know
                         </p>
-                        <p className="text-xs text-neutral-200">Multiple choice</p>
+                        <p className="text-xs text-neutral-500">Instructor name · 3m 45s</p>
                       </div>
+                      <Lock size={20} color="#656B7C" variant="Bold" />
+                    </div>
+
+                    {/* Assessment Card - Sales pitch - Disabled */}
+                    <div className="bg-neutral-700 rounded-sm p-3 flex items-center gap-2">
+                      <div className="w-12 h-12 flex items-center justify-center overflow-hidden mix-blend-luminosity">
+                        <img
+                          src="https://www.figma.com/api/mcp/asset/3b9efe6d-556a-45c8-bec5-5b1b5416e754"
+                          alt="Assessment"
+                          className="w-10 h-10"
+                        />
+                      </div>
+                      <div className="flex-1 flex flex-col gap-1">
+                        <p className="font-bold text-sm text-neutral-500 leading-6">
+                          Sales pitch
+                        </p>
+                        <p className="text-xs text-neutral-500">Short text</p>
+                      </div>
+                      <Lock size={20} color="#656B7C" variant="Bold" />
+                    </div>
+
+                    {/* Assessment Card - Multiple choice - Disabled */}
+                    <div className="bg-neutral-700 rounded-sm p-3 flex items-center gap-2">
+                      <div className="w-12 h-12 flex items-center justify-center overflow-hidden mix-blend-luminosity">
+                        <img
+                          src="https://www.figma.com/api/mcp/asset/3b9efe6d-556a-45c8-bec5-5b1b5416e754"
+                          alt="Assessment"
+                          className="w-10 h-10"
+                        />
+                      </div>
+                      <div className="flex-1 flex flex-col gap-1">
+                        <p className="font-bold text-sm text-neutral-500 leading-6">
+                          50 free Tools and resources that everyone should know
+                        </p>
+                        <p className="text-xs text-neutral-500">Multiple choice</p>
+                      </div>
+                      <Lock size={20} color="#656B7C" variant="Bold" />
                     </div>
                   </div>
                 </div>

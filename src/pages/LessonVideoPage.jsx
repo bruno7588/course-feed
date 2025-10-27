@@ -10,13 +10,14 @@ import { cn } from '../lib/utils';
  * @param {Function} props.onBack - Callback for back navigation
  * @param {Function} props.onStartTest - Callback to navigate to situational test
  * @param {Function} props.onNextPage - Callback to navigate to next page (Event)
+ * @param {boolean} props.sidebarOpen - Global sidebar state
+ * @param {Function} props.onToggleSidebar - Callback to toggle sidebar
  */
-export const LessonVideoPage = ({ onBack, onStartTest, onNextPage }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+export const LessonVideoPage = ({ onBack, onStartTest, onNextPage, sidebarOpen, onToggleSidebar }) => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [showSidebarTooltip, setShowSidebarTooltip] = useState(false);
   const [courseOutlineOpen, setCourseOutlineOpen] = useState(false);
-  const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
+  const [currentLessonIndex, setCurrentLessonIndex] = useState(3); // Start on last episode
 
   // Mock lessons data
   const lessons = [
@@ -43,10 +44,6 @@ export const LessonVideoPage = ({ onBack, onStartTest, onNextPage }) => {
   const hasNext = currentLessonIndex < lessons.length - 1;
   const canNavigatePrevious = hasPrevious || !!onStartTest; // Can go previous if there's a previous lesson OR can go to test
   const canNavigateNext = hasNext || !!onNextPage; // Can go next if there's another lesson OR next page
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
 
   const handlePreviousLesson = () => {
     if (hasPrevious) {
@@ -128,7 +125,7 @@ export const LessonVideoPage = ({ onBack, onStartTest, onNextPage }) => {
             {/* Sidebar Toggle */}
             <div className="relative">
               <button
-                onClick={toggleSidebar}
+                onClick={onToggleSidebar}
                 onMouseEnter={() => setShowSidebarTooltip(true)}
                 onMouseLeave={() => setShowSidebarTooltip(false)}
                 className="w-10 h-10 flex items-center justify-center bg-neutral-700 hover:bg-neutral-600 rounded-full transition-colors"
@@ -220,7 +217,7 @@ export const LessonVideoPage = ({ onBack, onStartTest, onNextPage }) => {
           </div>
 
           {/* Animated Side Panel with Lesson Details */}
-          <div className="w-[540px] bg-neutral-800 border-l border-neutral-600 overflow-y-auto">
+          <div className="w-[540px] bg-neutral-800 border-l border-neutral-600 overflow-y-auto transition-all duration-200 ease-in-out">
           <div className="flex flex-col gap-5 pb-8">
             {/* Course Outline */}
             <div className="bg-[rgba(69,76,94,0.16)] flex flex-col overflow-hidden">
@@ -245,19 +242,16 @@ export const LessonVideoPage = ({ onBack, onStartTest, onNextPage }) => {
               >
                 <div className="flex flex-col gap-4 px-6 pb-4">
                   {/* Assessment Card - Completed */}
-                  <button
-                    onClick={onStartTest}
-                    className="bg-neutral-700 hover:bg-neutral-600 rounded-sm p-3 flex items-center gap-2 w-full transition-colors cursor-pointer"
-                  >
+                  <div className="bg-neutral-700 rounded-sm p-3 flex items-center gap-2">
                     <div className="w-12 h-12 flex items-center justify-center overflow-hidden">
                       <img
-                        src="https://www.figma.com/api/mcp/asset/3b9efe6d-556a-45c8-bec5-5b1b5416e754"
+                        src="https://www.figma.com/api/mcp/asset/6d4a0c6a-29be-49a4-97bd-7d8f34778852"
                         alt="Assessment"
                         className="w-10 h-10"
                       />
                     </div>
                     <div className="flex-1 flex flex-col gap-1">
-                      <p className="font-bold text-sm text-neutral-25 leading-6 text-left">
+                      <p className="font-bold text-sm text-neutral-25 leading-6">
                         50 free Tools and resources that everyone should know
                       </p>
                       <div className="flex items-center justify-between">
@@ -265,7 +259,7 @@ export const LessonVideoPage = ({ onBack, onStartTest, onNextPage }) => {
                         <TickCircle size={16} color="#18A957" variant="Bold" />
                       </div>
                     </div>
-                  </button>
+                  </div>
 
                   {/* Video Lesson Card - In Progress */}
                   <div className="bg-[rgba(255,187,56,0.12)] rounded-sm p-3 flex items-center gap-2">
@@ -297,9 +291,9 @@ export const LessonVideoPage = ({ onBack, onStartTest, onNextPage }) => {
                     </div>
                   </div>
 
-                  {/* Reading/Document Lesson Card - Completed */}
-                  <button className="bg-neutral-700 hover:bg-neutral-600 rounded-sm p-3 flex items-center gap-2 w-full transition-colors cursor-pointer">
-                    <div className="w-12 h-12 rounded-s overflow-hidden relative">
+                  {/* Reading/Document Lesson Card - Disabled */}
+                  <div className="bg-neutral-700 rounded-sm p-3 flex items-center gap-2">
+                    <div className="w-12 h-12 rounded-s overflow-hidden relative mix-blend-luminosity">
                       <img
                         src="https://www.figma.com/api/mcp/asset/f6090e6a-1b17-4ef5-83d6-c0786d463ff2"
                         alt="Reading"
@@ -310,19 +304,17 @@ export const LessonVideoPage = ({ onBack, onStartTest, onNextPage }) => {
                       </div>
                     </div>
                     <div className="flex-1 flex flex-col gap-2">
-                      <p className="font-bold text-sm text-neutral-25 leading-6 text-left">
+                      <p className="font-bold text-sm text-neutral-500 leading-6">
                         50 free Tools and resources that everyone should know
                       </p>
-                      <div className="flex items-center justify-between">
-                        <p className="text-xs text-neutral-200">Instructor name · 3m 45s</p>
-                        <TickCircle size={16} color="#18A957" variant="Bold" />
-                      </div>
+                      <p className="text-xs text-neutral-500">Instructor name · 3m 45s</p>
                     </div>
-                  </button>
+                    <Lock size={20} color="#656B7C" variant="Bold" />
+                  </div>
 
-                  {/* Link/External Resource Card - Completed */}
-                  <button className="bg-neutral-700 hover:bg-neutral-600 rounded-sm p-3 flex items-center gap-2 w-full transition-colors cursor-pointer">
-                    <div className="w-12 h-12 rounded-s overflow-hidden relative">
+                  {/* Link/External Resource Card - Disabled */}
+                  <div className="bg-neutral-700 rounded-sm p-3 flex items-center gap-2">
+                    <div className="w-12 h-12 rounded-s overflow-hidden relative mix-blend-luminosity">
                       <img
                         src="https://www.figma.com/api/mcp/asset/f6090e6a-1b17-4ef5-83d6-c0786d463ff2"
                         alt="Link"
@@ -333,21 +325,19 @@ export const LessonVideoPage = ({ onBack, onStartTest, onNextPage }) => {
                       </div>
                     </div>
                     <div className="flex-1 flex flex-col gap-2">
-                      <p className="font-bold text-sm text-neutral-25 leading-6 text-left">
+                      <p className="font-bold text-sm text-neutral-500 leading-6">
                         50 free Tools and resources that everyone should know
                       </p>
-                      <div className="flex items-center justify-between">
-                        <p className="text-xs text-neutral-200">Instructor name · 3m 45s</p>
-                        <TickCircle size={16} color="#18A957" variant="Bold" />
-                      </div>
+                      <p className="text-xs text-neutral-500">Instructor name · 3m 45s</p>
                     </div>
-                  </button>
+                    <Lock size={20} color="#656B7C" variant="Bold" />
+                  </div>
 
 
-                  {/* Event Card */}
+                  {/* Event Card - Disabled */}
                   <div className="bg-neutral-700 rounded-sm p-3 flex items-start gap-2">
                     {/* Date Display */}
-                    <div className="w-12 h-12 flex items-center justify-center overflow-hidden shrink-0">
+                    <div className="w-12 h-12 flex items-center justify-center overflow-hidden shrink-0 mix-blend-luminosity">
                       <div className="w-12 h-12 rounded-lg overflow-hidden relative">
                         <img
                           src="https://www.figma.com/api/mcp/asset/98e60c93-0fe6-46a3-9f23-2be5b4902fbe"
@@ -367,7 +357,7 @@ export const LessonVideoPage = ({ onBack, onStartTest, onNextPage }) => {
                     </div>
                     {/* Event Info */}
                     <div className="flex-1 flex flex-col gap-2 min-w-0">
-                      <p className="font-bold text-sm text-neutral-25 leading-6 truncate">
+                      <p className="font-bold text-sm text-neutral-500 leading-6 truncate">
                         Title of the event
                       </p>
                       <div className="flex flex-wrap gap-2 items-start">
@@ -376,35 +366,36 @@ export const LessonVideoPage = ({ onBack, onStartTest, onNextPage }) => {
                           <img
                             src="https://www.figma.com/api/mcp/asset/3551ccc4-c07e-4cdc-8a92-60fa0bf15d79"
                             alt="Calendar"
-                            className="w-4 h-4"
+                            className="w-4 h-4 mix-blend-luminosity"
                           />
-                          <p className="text-xs text-neutral-200 leading-tight">Monday, 13 Nov 2025</p>
+                          <p className="text-xs text-neutral-500 leading-tight">Monday, 13 Nov 2025</p>
                         </div>
                         {/* Time */}
                         <div className="flex items-center gap-1">
                           <img
                             src="https://www.figma.com/api/mcp/asset/5d3ad3da-468b-4df7-a4a4-99903940195a"
                             alt="Clock"
-                            className="w-4 h-4"
+                            className="w-4 h-4 mix-blend-luminosity"
                           />
-                          <p className="text-xs text-neutral-200 leading-tight">11h00 - 12h00 GMT</p>
+                          <p className="text-xs text-neutral-500 leading-tight">11h00 - 12h00 GMT</p>
                         </div>
                         {/* Location */}
                         <div className="flex items-center gap-1">
                           <img
                             src="https://www.figma.com/api/mcp/asset/050f97d1-748a-470e-ab14-3b092fff4c86"
                             alt="Location"
-                            className="w-4 h-4"
+                            className="w-4 h-4 mix-blend-luminosity"
                           />
-                          <p className="text-xs text-neutral-200 leading-tight">Main office, room 101</p>
+                          <p className="text-xs text-neutral-500 leading-tight">Main office, room 101</p>
                         </div>
                       </div>
                     </div>
+                    <Lock size={20} color="#656B7C" variant="Bold" />
                   </div>
 
-                  {/* PDF Lesson Card - Not Started */}
+                  {/* PDF Lesson Card - Disabled */}
                   <div className="bg-neutral-700 rounded-sm p-3 flex items-center gap-2">
-                    <div className="w-12 h-12 rounded-lg overflow-hidden relative shrink-0">
+                    <div className="w-12 h-12 rounded-lg overflow-hidden relative shrink-0 mix-blend-luminosity">
                       <img
                         src="https://www.figma.com/api/mcp/asset/6d7d2c24-f4e8-4b97-bfa0-74856c72c5ba"
                         alt="PDF thumbnail"
@@ -420,16 +411,17 @@ export const LessonVideoPage = ({ onBack, onStartTest, onNextPage }) => {
                       </div>
                     </div>
                     <div className="flex-1 flex flex-col gap-1 min-w-0">
-                      <p className="font-bold text-sm text-neutral-25 leading-6 truncate">
+                      <p className="font-bold text-sm text-neutral-500 leading-6 truncate">
                         50 free Tools and resources that everyone should know
                       </p>
-                      <p className="text-xs text-neutral-200">Instructor name · 3m 45s</p>
+                      <p className="text-xs text-neutral-500">Instructor name · 3m 45s</p>
                     </div>
+                    <Lock size={20} color="#656B7C" variant="Bold" />
                   </div>
 
-                  {/* Assessment Card - Multiple choice */}
+                  {/* Assessment Card - Multiple choice - Disabled */}
                   <div className="bg-neutral-700 rounded-sm p-3 flex items-center gap-2">
-                    <div className="w-12 h-12 flex items-center justify-center overflow-hidden">
+                    <div className="w-12 h-12 flex items-center justify-center overflow-hidden mix-blend-luminosity">
                       <img
                         src="https://www.figma.com/api/mcp/asset/3b9efe6d-556a-45c8-bec5-5b1b5416e754"
                         alt="Assessment"
@@ -437,11 +429,12 @@ export const LessonVideoPage = ({ onBack, onStartTest, onNextPage }) => {
                       />
                     </div>
                     <div className="flex-1 flex flex-col gap-1">
-                      <p className="font-bold text-sm text-neutral-25 leading-6">
+                      <p className="font-bold text-sm text-neutral-500 leading-6">
                         50 free Tools and resources that everyone should know
                       </p>
-                      <p className="text-xs text-neutral-200">Multiple choice</p>
+                      <p className="text-xs text-neutral-500">Multiple choice</p>
                     </div>
+                    <Lock size={20} color="#656B7C" variant="Bold" />
                   </div>
                 </div>
               </div>

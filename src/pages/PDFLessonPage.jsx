@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, ArrowRight, ArrowUp, ArrowDown, SidebarLeft, SidebarRight, Maximize4, More, TickCircle, Discover, ArchiveAdd, Share, Message } from 'iconsax-react';
+import { ArrowLeft, ArrowRight, ArrowUp, ArrowDown, SidebarLeft, SidebarRight, Maximize4, More, TickCircle, Discover, ArchiveAdd, Share, Message, Lock } from 'iconsax-react';
 import { GlobalHeader } from '../components/layout/GlobalHeader';
 import { cn } from '../lib/utils';
 
@@ -11,10 +11,14 @@ import { cn } from '../lib/utils';
  * @param {Function} props.onPrevious - Callback for previous lesson navigation
  * @param {Function} props.onNext - Callback for next lesson navigation
  * @param {Function} props.onTakeQuiz - Callback for "Take Quiz" button
+ * @param {Function} props.onGoToTest - Callback to navigate to test
+ * @param {Function} props.onGoToLesson - Callback to navigate to video lesson
+ * @param {Function} props.onGoToEvent - Callback to navigate to event
+ * @param {boolean} props.sidebarOpen - Global sidebar state
+ * @param {Function} props.onToggleSidebar - Callback to toggle sidebar
  */
-export const PDFLessonPage = ({ onBack, onPrevious, onNext, onTakeQuiz }) => {
+export const PDFLessonPage = ({ onBack, onPrevious, onNext, onTakeQuiz, onGoToTest, onGoToLesson, onGoToEvent, sidebarOpen, onToggleSidebar }) => {
   const [currentPage, setCurrentPage] = useState(0);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showFooter, setShowFooter] = useState(false);
   const [showSidebarTooltip, setShowSidebarTooltip] = useState(false);
 
@@ -56,10 +60,6 @@ export const PDFLessonPage = ({ onBack, onPrevious, onNext, onTakeQuiz }) => {
     if (currentPage < totalPages - 1) {
       setCurrentPage(currentPage + 1);
     }
-  };
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
   };
 
   const canNavigatePrevious = currentPage > 0;
@@ -205,11 +205,14 @@ export const PDFLessonPage = ({ onBack, onPrevious, onNext, onTakeQuiz }) => {
         </div>
 
         {/* Right Sidebar Actions */}
-        <div className="flex flex-col items-center gap-3 py-4 px-4">
+        <div className={cn(
+          "absolute top-0 bottom-0 flex flex-col items-center gap-3 py-4 px-4 z-10 transition-all duration-200 ease-in-out",
+          sidebarOpen ? "right-[540px]" : "right-0"
+        )}>
           {/* Sidebar Toggle */}
           <div className="relative">
             <button
-              onClick={toggleSidebar}
+              onClick={onToggleSidebar}
               onMouseEnter={() => setShowSidebarTooltip(true)}
               onMouseLeave={() => setShowSidebarTooltip(false)}
               className="w-10 h-10 flex items-center justify-center bg-neutral-700 hover:bg-neutral-600 rounded-full transition-colors"
@@ -274,9 +277,12 @@ export const PDFLessonPage = ({ onBack, onPrevious, onNext, onTakeQuiz }) => {
           </button>
         </div>
 
-        {/* Side Panel - Course Outline */}
-        {sidebarOpen && (
-          <div className="w-[540px] bg-neutral-800 border-l border-neutral-600 overflow-y-auto">
+        {/* Side Panel - Course Outline - Animated slide in/out */}
+        <div className={cn(
+          "absolute right-0 top-0 bottom-0 w-[540px] bg-neutral-800 border-l border-neutral-600 overflow-y-auto",
+          "transition-transform duration-200 ease-in-out will-change-transform",
+          sidebarOpen ? "translate-x-0" : "translate-x-full"
+        )}>
             <div className="flex flex-col">
               {/* Course Outline Section */}
               <div className="flex flex-col gap-4 border-b border-neutral-600 py-6 px-6">
@@ -284,7 +290,10 @@ export const PDFLessonPage = ({ onBack, onPrevious, onNext, onTakeQuiz }) => {
 
                 <div className="flex flex-col gap-3">
                   {/* Completed Assessment Card - Clickable */}
-                  <button className="bg-neutral-700 hover:bg-neutral-600 rounded-sm p-3 flex items-center gap-2 w-full transition-colors cursor-pointer">
+                  <button
+                    onClick={onGoToTest}
+                    className="bg-neutral-700 hover:bg-neutral-600 rounded-sm p-3 flex items-center gap-2 w-full transition-colors cursor-pointer"
+                  >
                     <div className="w-12 h-12 flex items-center justify-center overflow-hidden">
                       <img
                         src="https://www.figma.com/api/mcp/asset/3b9efe6d-556a-45c8-bec5-5b1b5416e754"
@@ -343,8 +352,11 @@ export const PDFLessonPage = ({ onBack, onPrevious, onNext, onTakeQuiz }) => {
                     </div>
                   </button>
 
-                  {/* Event Card */}
-                  <div className="bg-neutral-700 rounded-sm p-3 flex items-start gap-2">
+                  {/* Event Card - Completed */}
+                  <button
+                    onClick={onGoToEvent}
+                    className="bg-neutral-700 hover:bg-neutral-600 rounded-sm p-3 flex items-start gap-2 w-full transition-colors cursor-pointer"
+                  >
                     {/* Date Display */}
                     <div className="w-12 h-12 flex items-center justify-center overflow-hidden shrink-0">
                       <div className="w-12 h-12 rounded-lg overflow-hidden relative">
@@ -399,7 +411,8 @@ export const PDFLessonPage = ({ onBack, onPrevious, onNext, onTakeQuiz }) => {
                         </div>
                       </div>
                     </div>
-                  </div>
+                    <TickCircle size={16} color="#18A957" variant="Bold" />
+                  </button>
 
                   {/* PDF Lesson Card - Current/In Progress */}
                   <div className="rounded-sm p-3 flex items-center gap-2" style={{ backgroundColor: 'rgba(255, 187, 56, 0.12)' }}>
@@ -435,9 +448,9 @@ export const PDFLessonPage = ({ onBack, onPrevious, onNext, onTakeQuiz }) => {
                     </div>
                   </div>
 
-                  {/* Assessment Card - Multiple choice */}
+                  {/* Assessment Card - Multiple choice - Disabled */}
                   <div className="bg-neutral-700 rounded-sm p-3 flex items-center gap-2">
-                    <div className="w-12 h-12 flex items-center justify-center overflow-hidden">
+                    <div className="w-12 h-12 flex items-center justify-center overflow-hidden mix-blend-luminosity">
                       <img
                         src="https://www.figma.com/api/mcp/asset/3b9efe6d-556a-45c8-bec5-5b1b5416e754"
                         alt="Assessment"
@@ -445,11 +458,12 @@ export const PDFLessonPage = ({ onBack, onPrevious, onNext, onTakeQuiz }) => {
                       />
                     </div>
                     <div className="flex-1 flex flex-col gap-1">
-                      <p className="font-bold text-sm text-neutral-25 leading-6">
+                      <p className="font-bold text-sm text-neutral-500 leading-6">
                         50 free Tools and resources that everyone should know
                       </p>
-                      <p className="text-xs text-neutral-200">Multiple choice</p>
+                      <p className="text-xs text-neutral-500">Multiple choice</p>
                     </div>
+                    <Lock size={20} color="#656B7C" variant="Bold" />
                   </div>
                 </div>
               </div>
@@ -531,8 +545,7 @@ export const PDFLessonPage = ({ onBack, onPrevious, onNext, onTakeQuiz }) => {
                 </div>
               </div>
             </div>
-          </div>
-        )}
+        </div>
       </div>
 
       {/* Animated Footer - Shows on last page */}
